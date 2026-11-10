@@ -1,4 +1,5 @@
 raw/
-__pycache__/
+out/*.tmp
 out/run.log
 out/market.dry.json
+__pycache__/

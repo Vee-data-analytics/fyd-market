@@ -683,10 +683,19 @@ def parse_mfc(data: dict) -> tuple[list[dict], list[dict], int]:
 
 
 def scrape_mfc(http: Http, ctx: dict) -> dict:
-    r = http.get(MFC_API, headers={"Origin": "https://www.mfc.co.za", "Referer": MFC_PAGE,
-                                   "Accept": "application/json"})
-    r.raise_for_status()
-    cars, points, raw = parse_mfc(r.json())
+    # The API intermittently answers R00 with an empty list (seen with extra
+    # Origin/Accept headers); plain GET + one retry is reliable.
+    data = {}
+    for attempt in range(2):
+        r = http.get(MFC_API, headers={"Referer": MFC_PAGE})
+        r.raise_for_status()
+        data = r.json()
+        if data.get("data"):
+            break
+        time.sleep(5)
+    if not data.get("data"):
+        raise RuntimeError(f"MFC API returned no rows (responseCode={data.get('responseCode')})")
+    cars, points, raw = parse_mfc(data)
     return {"cars": cars, "points": points, "raw": raw}
 
 
@@ -731,6 +740,11 @@ def parse_wbc_retail(data: dict) -> list[dict]:
     return pts
 
 
+def real_date(v):
+    """WBC uses 0001-01-01 as 'not scheduled yet'."""
+    return v if v and not str(v).startswith(("0001", "1900")) else None
+
+
 def parse_wbc_auction(data: dict) -> list[dict]:
     cars = []
     for x in data.get("data") or []:
@@ -750,7 +764,8 @@ def parse_wbc_auction(data: dict) -> list[dict]:
         cars.append(make_car(
             "webuycars_auction", wbc_url(x), x.get("Description") or "",
             location=x.get("DealerKey"), region=x.get("Province"),
-            auctionDate=auc.get("expirationDateTime") or x.get("auctionStartDateTime"),
+            auctionDate=real_date(auc.get("expirationDateTime")) or real_date(x.get("auctionEndDate"))
+            or real_date(x.get("auctionStartDateTime")),
             auctionName=f"WeBuyCars online auction ({x.get('lotCategory') or 'lot'})",
             priceKind="starting bid", price=start, image=wbc_image(x),
             km=clean_km(x.get("Mileage")), fuel=x.get("FuelType"), transmission=x.get("Gearbox"),
@@ -759,7 +774,7 @@ def parse_wbc_auction(data: dict) -> list[dict]:
             bodyType="Bakkie" if (x.get("BodyType") or "").lower() in ("bakkie", "pick-up", "pickup",
                                                                         "double cab", "single cab") else x.get("BodyType"),
             extra={"bids": x.get("totalNumberOfBids"), "reserveMet": x.get("reservePriceMet"),
-                   "auctionEnds": auc.get("expirationDateTime")},
+                   "auctionEnds": real_date(auc.get("expirationDateTime"))},
         ))
     return cars
 
@@ -896,8 +911,11 @@ P24 = "https://www.property24.com"
 
 def parse_p24_results(html: str, suburb_hint: str | None = None) -> tuple[list[dict], bool]:
     soup = BeautifulSoup(html, "lxml")
-    if not soup.select_one(".js_listingResultsContainer") and re.search(r"captcha|verify you are human|challenge", html, re.I):
-        raise Blocked("Property24 served a bot check")
+    # Normal pages mention reCAPTCHA (contact form), and zero-result pages have no
+    # results container, so only treat it as a bot wall when it isn't a P24 listing page.
+    title = soup.title.get_text(" ", strip=True) if soup.title else ""
+    if "Property24" not in title and re.search(r"captcha|verify you are human|challenge|access denied", html, re.I):
+        raise Blocked(f"Property24 served a bot check (title={title[:60]!r})")
     homes = []
     for tile in soup.select("div.p24_regularTile[data-listing-number]"):
         a = tile.select_one("a.p24_content[href]") or tile.select_one("a[href]")
@@ -1059,6 +1077,22 @@ def dedupe_homes(homes: list[dict]) -> list[dict]:
     return out
 
 
+def cap_homes(homes: list[dict], n: int = HOME_MAX) -> list[dict]:
+    """Round-robin across suburbs (each suburb sorted by price) so the cap keeps every
+    suburb and the whole price band instead of only the cheapest units."""
+    by: dict[str, list] = {}
+    for h in sorted(homes, key=lambda h: h["price"] or 0):
+        by.setdefault((h.get("suburb") or "").lower(), []).append(h)
+    out, queues = [], list(by.values())
+    while queues and len(out) < n:
+        for q in list(queues):
+            if q and len(out) < n:
+                out.append(q.pop(0))
+            if not q:
+                queues.remove(q)
+    return sorted(out, key=lambda h: h["price"] or 0)
+
+
 def run(only: set[str] | None = None, out_path: Path = OUT / "market.json") -> dict:
     t0 = time.time()
     http = Http()
@@ -1094,9 +1128,7 @@ def run(only: set[str] | None = None, out_path: Path = OUT / "market.json") -> d
         info["seconds"] = round(time.time() - st, 1)
         sources[name] = info
         print(f"[{name}] {info['ok']} kept={info['count']} raw={info.get('raw')} err={info['error']}", file=sys.stderr)
-    homes = dedupe_homes(homes)
-    homes.sort(key=lambda h: (h["price"] or 0))
-    homes = homes[:HOME_MAX]
+    homes = cap_homes(dedupe_homes(homes))
     cars.sort(key=lambda c: (c["region"] != "Gauteng", c["auctionDate"] or "9999", c["price"] or 9e9))
     carprices = merge_history(points, write=out_path.parent == OUT)
     result = {
