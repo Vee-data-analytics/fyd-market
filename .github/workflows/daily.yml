@@ -1,0 +1,29 @@
+# Checks the auction and property sites once a day and publishes out/market.json,
+# which the Free Your Dreams app downloads. 04:00 UTC = 06:00 in Johannesburg.
+name: daily market watch
+on:
+  schedule:
+    - cron: '0 4 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: daily, cancel-in-progress: false }
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Offline parser check
+        run: uv run scrape.py --dry
+      - name: Scrape
+        run: uv run scrape.py
+      - name: Publish if changed
+        run: |
+          git config user.name "fyd-market bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add out/market.json
+          git diff --cached --quiet && echo "no change" && exit 0
+          git commit -m "market $(date -u +%Y-%m-%d)"
+          git push

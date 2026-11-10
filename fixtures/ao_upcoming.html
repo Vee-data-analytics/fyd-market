@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Auctions</title>
+        <link rel="icon" type="image/png" href="/img/Favicon.png">
+<style>
+    :root {
+        --brand-yellow: #FDC500;
+        --brand-yellow-dark: #E0AF00;
+        --brand-yellow-soft: #FEE082;
+    }
+
+    .brand-yellow-bg {
+        background-color: var(--brand-yellow) !important;
+    }
+
+    .brand-yellow-text {
+        color: var(--brand-yellow) !important;
+    }
+
+    .brand-yellow-border {
+        border-color: var(--brand-yellow) !important;
+    }
+
+    .brand-yellow-soft-bg {
+        background-color: var(--brand-yellow-soft) !important;
+    }
+
+    .brand-yellow-hover:hover {
+        color: var(--brand-yellow-dark) !important;
+    }
+
+    .brand-outline-action {
+        color: var(--brand-yellow) !important;
+        border-color: var(--brand-yellow) !important;
+    }
+
+    .brand-outline-action:hover {
+        background-color: var(--brand-yellow) !important;
+        color: #111 !important;
+    }
+
+    .brand-cta {
+        background-color: var(--brand-yellow) !important;
+        color: #111 !important;
+    }
+
+    .brand-cta:hover {
+        background-color: var(--brand-yellow-dark) !important;
+        color: #111 !important;
+    }
+
+    .brand-loader-bg {
+        background-color: var(--brand-yellow-dark) !important;
+    }
+
+    .brand-tab-active[aria-selected="true"] {
+        border-color: var(--brand-yellow-dark) !important;
+        color: var(--brand-yellow-dark) !important;
+    }
+</style>
+        <link href="/css/global.main.css" rel="stylesheet">
+    </head>
+
+    <body class="bg-gray-100">
+
+        <!-- Top Notice Bar -->
+<nav class="text-black brand-yellow-bg">
+    <div class="max-w-7xl mx-auto flex items-center justify-between py-2 px-4">
+        <!-- Left -->
+        <a href="https://auctionoperation.co.za" class="flex items-center text-xs sm:text-sm hover:underline">
+            <span class="font-semibold">Return to Main Website - auctionoperation.co.za</span>
+        </a>
+
+        <!-- Right -->
+            </div>
+</nav>
+
+<!-- Main Navbar -->
+<nav class="bg-black text-white">
+    <div class="max-w-7xl mx-auto px-4 py-2">
+        <div class="flex items-center justify-between">
+            <!-- Left: Logo + Nav Links -->
+            <div class="flex items-center gap-6">
+                <!-- Logo first -->
+                <a href="/" class="flex items-center">
+                    <img src="/img/Logo.png" alt="Auction Operation"
+                         class="w-[110px] h-[44px] md:w-[125px] md:h-[50px] object-contain" />
+                </a>
+
+                <!-- Navigation Links (desktop only) -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a id="upcoming"
+                       href="/home/auctions/upcoming?menu-item=upcoming&status=upcoming&page=0"
+                       class="font-openSans text-white hover:underline hover:text-gray-200 menu-item">
+                        Upcoming Auctions
+                    </a>
+                    <a id="past-auctions"
+                       href="/home/auctions/past?menu-item=past-auctions&status=past&page=0"
+                       class="font-openSans text-white hover:underline hover:text-gray-200 menu-item">
+                        Past Auctions
+                    </a>
+                    <a id="user-bids"
+                       href="/user/bids/layout?page=0&type=upcoming"
+                       class="font-openSans text-white hover:underline hover:text-gray-200 menu-item">
+                        My Bids
+                    </a>
+                    <a id="user-watched-lots"
+                       href="/user/watched/layout?page=0&type=upcoming"
+                       class="font-openSans text-white hover:underline hover:text-gray-200 menu-item">
+                        Watched Lots
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mobile: Hamburger -->
+            <button id="nav-toggle"
+                    class="inline-flex items-center justify-center p-2 rounded-md md:hidden focus:outline-none focus:ring-2"
+                    aria-controls="primary-menu" aria-expanded="false">
+                <span class="sr-only">Open main menu</span>
+                <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M4 7h16M4 12h16M4 17h16"/>
+                </svg>
+            </button>
+
+            <!-- Right side buttons -->
+            <div class="hidden md:flex items-center gap-4">
+                                    <p class="font-openSans whitespace-nowrap">Our Mobile App is FREE!</p>
+                                            <a href="https://apps.apple.com/za/app/auction-operation-app/id6758557048" class="shrink-0"><img src="/img/mobile-store/app-store-logo.svg" alt="App Store" class="h-8 w-8"></a>
+                                                                <a href="https://play.google.com/store/apps/details?id=za.co.start.smart.auction.operation&amp;hl=en" class="shrink-0"><img src="/img/mobile-store/play-store-logo.svg" alt="Play Store" class="h-8 w-8"></a>
+                                    
+                                                            <a href="/user/login"
+                           class="bg-white text-black px-4 py-2 rounded-full hover:bg-gray-100 flex items-center gap-2">
+                            <p class="hidden md:block">Login</p>
+                            <svg class="h-8 w-8 block md:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#000">
+                                <path d="M440-360h80v-120h120v-80H520v-120h-80v120H320v80h120v120ZM320-120v-80H160q-33 0-56.5-23.5T80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v480q0 33-23.5 56.5T800-200H640v80H320ZM160-280h640v-480H160v480Z"/>
+                            </svg>
+                        </a>
+                                            <a href="/user/registration"
+                           class="bg-white text-black px-4 py-2 rounded-full hover:bg-gray-100 flex items-center gap-2">
+                            <p class="hidden md:block">Register</p>
+                            <svg class="h-8 w-8 block md:hidden" xmlns="http://www.w3.org/2000/svg" viewBox="0 -960 960 960" fill="#000">
+                                <path d="M440-360h80v-120h120v-80H520v-120h-80v120H320v80h120v120ZM320-120v-80H160q-33 0-56.5-23.5T80-280v-480q0-33 23.5-56.5T160-840h640q33 0 56.5 23.5T880-760v480q0 33-23.5 56.5T800-200H640v80H320ZM160-280h640v-480H160v480Z"/>
+                            </svg>
+                        </a>
+                                    
+                            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="primary-menu" class="md:hidden hidden pt-3">
+            <div class="flex flex-col gap-3 border-t border-white/10 pt-3">
+                <a href="/home/auctions/upcoming?menu-item=upcoming&status=upcoming&page=0"
+                   class="text-white hover:underline hover:text-gray-200 menu-item">
+                    Upcoming Auctions
+                </a>
+                <a href="/home/auctions/past?menu-item=past-auctions&status=past&page=0"
+                   class="text-white hover:underline hover:text-gray-200 menu-item">
+                    Past Auctions
+                </a>
+                <a href="/user/bids/layout?page=0&type=upcoming"
+                   class="text-white hover:underline hover:text-gray-200 menu-item">
+                    My Bids
+                </a>
+                <a href="/user/watched/layout?page=0&type=upcoming"
+                   class="text-white hover:underline hover:text-gray-200 menu-item">
+                    Watched Lots
+                </a>
+
+                                    <div class="flex items-center gap-4 border-t border-white/10 pt-3">
+                        <p class="font-openSans text-white">Our Mobile App is FREE!</p>
+                                                    <a href="https://apps.apple.com/za/app/auction-operation-app/id6758557048" class="shrink-0"><img src="/img/mobile-store/app-store-logo.svg" alt="App Store" class="h-8 w-8"></a>
+                                                                            <a href="https://play.google.com/store/apps/details?id=za.co.start.smart.auction.operation&amp;hl=en" class="shrink-0"><img src="/img/mobile-store/play-store-logo.svg" alt="Play Store" class="h-8 w-8"></a>
+                                            </div>
+                            </div>
+        </div>
+    </div>
+</nav>
+
+
+        <!-- Page Title Bar -->
+        <nav class="bg-white text-black">
+            <div class="max-w-7xl mx-auto flex items-center justify-between py-2 px-4">
+                <div class="flex space-x-6 text-sm font-medium">
+                    <h2 class="text-xl md:text-2xl text-black">All Upcoming Auctions</h2>
+                </div>
+            </div>
+        </nav>
+
+        <main>
+                        <!-- Filters + Pagination (Responsive) -->
+            <div class="max-w-7xl mx-auto p-4 border-b">
+                <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                    <!-- Left: Filters -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" class="size-4" name="auction-type" value="LIVE" />
+                            <span class="text-sm md:text-base">Live Auctions</span>
+                        </label>
+
+                        <label class="flex items-center gap-2">
+                            <input type="checkbox" class="size-4" name="auction-type" value="TIMED" />
+                            <span class="text-sm md:text-base">Timed Auctions</span>
+                        </label>
+
+                        
+                                                <span class="bg-white px-2 py-1 rounded-md text-sm md:text-base md:ml-4">
+                      19 Auctions
+                    </span>
+                                            </div>
+
+                    <!-- Right: Pagination -->
+                    <div class="flex items-center justify-center gap-2 sm:gap-3">
+                        <p class="hidden sm:block text-sm md:text-base">Page Views</p>
+
+                        <button id="previous-page"
+                                class="p-2 rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-black/20"
+                                aria-label="Previous page"
+                                data-status="" data-page="0">
+                            <img class="h-5 w-5 sm:h-6 sm:w-6" src="/img/pagination/left.svg" alt="arrow-left" />
+                        </button>
+
+                        <span id="current-page"
+                              class="rounded-md text-sm sm:text-base px-3 py-1.5 bg-white font-semibold">
+                      1                    </span>
+
+                        <span id="number-of-pages"
+                              class="rounded-md text-sm sm:text-base px-3 py-1.5 text-gray-600 bg-gray-200 font-semibold">
+                      2
+                    </span>
+
+                        <button id="next-page"
+                                class="p-2 rounded hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-black/20"
+                                aria-label="Next page"
+                                data-size="50">
+                            <img class="h-5 w-5 sm:h-6 sm:w-6" src="/img/pagination/right.svg" alt="arrow-right" />
+                        </button>
+                    </div>
+                </div>
+
+                            </div>
+
+            <!-- Auctions List -->
+            <section class="max-w-7xl mx-auto bg-white shadow-sm rounded-lg mb-20">
+                <div class="p-4 space-y-4">
+                                                                <div id="NDkz"
+                             class="timed auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/e391d3b5-a902-41d6-b6d4-a42866efb80f.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Mon <strong>09 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Thu <strong>12 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/TIMED.png" alt="TIMED Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/RUNNING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">Midweek Online Auto Auction</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 09, 2026 at 08:00 AM · 13 Granville Ave, Robertville, Roodepoort.,  13 Granville Ave, Robertville, Roodepoort. 
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDkz"
+                                                                                              href="/auction/bidder/registration/NDkz?status=upcoming&menu-item=upcoming&auctionId=NDkz&codedTitle=1-midweekonlineautoauction"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDkz"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            45 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDgx"
+                             class="timed auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/1587da5c-2787-48a1-8292-b30603e891df.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Tue <strong>10 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Thu <strong>12 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/TIMED.png" alt="TIMED Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/RUNNING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">NON-RUNNER AND SALVAGE ONLINE VEHICLE AUCTION!</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 10, 2026 at 08:00 AM · 36 Main Reef Road, Langlaagte, Roodepoort, 36 Main Reef Road, Langlaagte, Roodepoort  
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDgx"
+                                                                                              href="/auction/bidder/registration/NDgx?status=upcoming&menu-item=upcoming&auctionId=NDgx&codedTitle=2-nonrunnerandsalvageonlinevehicleauction!"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDgx"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            354 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDc4"
+                             class="live auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/41a35816-cc44-453d-9ac5-4dff4467b723.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Wed <strong>11 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Wed <strong>11 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/LIVE.png" alt="LIVE Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">WESBANK NON-RUNNER VEHICLE AUCTION</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 11, 2026 at 10:30 AM · 13 Granville Ave, Robertville, Roodepoort,  13 Granville Ave, Robertville, Roodepoort  
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDc4"
+                                                                                              href="/auction/bidder/registration/NDc4?status=upcoming&menu-item=upcoming&auctionId=NDc4&codedTitle=3-wesbanknonrunnervehicleauction"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDc4"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            55 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDk4"
+                             class="timed auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/16819747-8b7d-43ec-8538-0f59bc30f2bb.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Fri <strong>13 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Mon <strong>16 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/TIMED.png" alt="TIMED Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">ONLINE VEHICLE SALE - EVERY WEEKEND</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 13, 2026 at 08:00 AM · Cnr Albertina Sisulu &amp; Wilson Road, Roodepoort, Johannesburg,  Cnr Albertina Sisulu &amp; Wilson Road, Roodepoort, Johannesburg 
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDk4"
+                                                                                              href="/auction/bidder/registration/NDk4?status=upcoming&menu-item=upcoming&auctionId=NDk4&codedTitle=4-onlinevehiclesaleeveryweekend"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDk4"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            0 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDk0"
+                             class="timed auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/c03eb3d6-6d0c-411b-a135-189fa6bdfa9a.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Mon <strong>16 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Thu <strong>19 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/TIMED.png" alt="TIMED Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">Midweek Online Auto Auction</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 16, 2026 at 08:00 AM · 13 Granville Ave, Robertville, Roodepoort., 13 Granville Ave, Robertville, Roodepoort.  
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDk0"
+                                                                                              href="/auction/bidder/registration/NDk0?status=upcoming&menu-item=upcoming&auctionId=NDk0&codedTitle=5-midweekonlineautoauction"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDk0"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            0 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDgy"
+                             class="live auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/7cfc0f7b-9aec-4eac-b847-4c2acb0164d4.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Tue <strong>17 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Tue <strong>17 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/LIVE.png" alt="LIVE Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">EVERY TUESDAY VEHICLE AUCTION!</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 17, 2026 at 10:30 AM · Cnr Main Reef &amp; Granville Road, Lea Glen (Robertville), Roodepoort, West Rand,  Cnr Main Reef &amp; Granville Road, Lea Glen (Robertville), Roodepoort, West Rand 
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDgy"
+                                                                                              href="/auction/bidder/registration/NDgy?status=upcoming&menu-item=upcoming&auctionId=NDgy&codedTitle=6-everytuesdayvehicleauction!"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDgy"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            0 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDgz"
+                             class="live auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/539d946e-9607-4d6e-aaf9-7f8cb532759a.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Wed <strong>18 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Wed <strong>18 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/LIVE.png" alt="LIVE Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">WESBANK NON-RUNNER VEHICLE AUCTION</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 18, 2026 at 10:30 AM · 13 Granville Ave, Robertville, Roodepoort,  13 Granville Ave, Robertville, Roodepoort 
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDgz"
+                                                                                              href="/auction/bidder/registration/NDgz?status=upcoming&menu-item=upcoming&auctionId=NDgz&codedTitle=7-wesbanknonrunnervehicleauction"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDgz"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            0 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDg1"
+                             class="timed auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/0a0d34d0-dba1-4dfa-8e10-08765ab8e0e9.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Fri <strong>20 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Mon <strong>23 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/TIMED.png" alt="TIMED Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">Home, Hardware, Catering &amp; Office Furniture – Plus Much More!</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 20, 2026 at 08:00 AM · 35/36 Main Reef Road, Langlaagte, Johannesburg,  35/36 Main Reef Road, Langlaagte, Johannesburg 
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDg1"
+                                                                                              href="/auction/bidder/registration/NDg1?status=upcoming&menu-item=upcoming&auctionId=NDg1&codedTitle=8-home%2Chardware%2Ccatering%26officefurniture%E2%80%93plusmuchmore!"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDg1"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            0 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDk5"
+                             class="timed auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/6127ef29-eff7-40f6-af2b-50adba8aad3b.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Fri <strong>20 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Mon <strong>23 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/TIMED.png" alt="TIMED Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">ONLINE VEHICLE SALE - EVERY WEEKEND</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 20, 2026 at 08:00 AM · Cnr Albertina Sisulu &amp; Wilson Road, Roodepoort, Johannesburg,  Cnr Albertina Sisulu &amp; Wilson Road, Roodepoort, Johannesburg 
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDk5"
+                                                                                              href="/auction/bidder/registration/NDk5?status=upcoming&menu-item=upcoming&auctionId=NDk5&codedTitle=9-onlinevehiclesaleeveryweekend"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDk5"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            0 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                            <div id="NDg0"
+                             class="live auction bg-gray-100 rounded-lg shadow-md overflow-hidden flex flex-col md:flex-row w-full">
+
+                            
+                            <div class="w-full md:w-2/5 relative">
+                                <div class="w-full h-[300px] md:h-full bg-white">
+                                    <img
+                                            src="https://auction-cdn.start-smart.co.za/393ada6e-04c8-464e-99de-c032a10c5d7a.jpeg"
+                                            alt="Auction Banner"
+                                            class="w-full h-full object-contain"
+                                    >
+                                </div>
+
+                                <!-- Date overlay -->
+                                <div class="flex items-center justify-center opacity-95 h-10 md:h-12 w-full md:w-3/5 bg-gray-100 absolute bottom-0 left-0 right-0 mx-auto rounded-t p-2 text-sm md:text-base">
+                                                                                                                                                
+                                    
+                                    Fri <strong>20 Nov</strong> 
+                                    <img src="/img/right-arrow.svg" alt="right chevron svg" class="mx-2 h-4 w-4 md:h-5 md:w-5">
+                                    Fri <strong>20 Nov</strong>
+                                </div>
+                            </div>
+
+                            
+                            <div class="flex flex-col w-full md:flex-1 md:w-3/5">
+                                
+                                <div class="p-4 md:p-6 flex-1">
+                                    <div class="flex items-center justify-between mb-2 gap-2">
+                                      <span class="flex items-center">
+                                        <img src="/img/auction-type/LIVE.png" alt="LIVE Auction"
+                                             class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                      </span>
+                                                                        <span class="flex items-center">
+                                                                                    <img src="/img/status/UPCOMING.png" alt="Status"
+                                                 class="w-[110px] h-[26px] md:w-[125px] md:h-[30px] object-contain">
+                                                                              </span>
+                                    </div>
+
+                                    <h3 class="text-lg md:text-xl font-semibold text-gray-800">WesBank KuGompo City Vehicle Auction</h3>
+                                    <p class="text-gray-600 mt-2 text-sm md:text-base">
+                                        Starting: Nov 20, 2026 at 10:30 AM · 1 Dirkie Uys Road Gately, East London,  1 Dirkie Uys Road Gately, East London 
+                                    </p>
+
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-3">
+                                                                                    <a id="register-to-bid-NDg0"
+                                                                                              href="/auction/bidder/registration/NDg0?status=upcoming&menu-item=upcoming&auctionId=NDg0&codedTitle=10-wesbankkugompocityvehicleauction"
+                                               class="brand-yellow-text flex items-center justify-center border border-gray-600 bg-black px-4 py-2 rounded-full text-sm hover:bg-gray-800">
+                                                Register
+                                            </a>
+                                                                                <a id="lots"
+                                           href="/auction/lots/layout?page=0&auctionId=NDg0"
+                                           class="flex justify-center cursor-pointer border border-gray-600 bg-white text-black px-4 py-2 rounded-full text-sm hover:bg-gray-300">
+                                            0 Lots
+                                        </a>
+                                    </div>
+                                </div>
+
+                                <span class="flex items-end px-4 md:pl-6 pb-3 text-xs md:text-sm text-red-500">
+                                    Please note that all lots are sold subject to confirmation (STC)
+                                  </span>
+                            </div>
+
+                        </div>
+                                    </div>
+            </section>
+            <footer class="fixed bottom-0 left-0 w-full bg-gray-100 text-gray-600 py-4 shadow-inner">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                    <span class="text-sm">&copy; Auction Operation - Our Favourite Word is SOLD!</span>
+                    <span class="text-xs text-gray-400">
+                      <span class="font-mono">df0ecbf2-49b8-4ae5-9253-4d0ae7d41a69</span>
+                    </span>
+                </div>
+            </footer>
+        </main>
+
+        <script type="module" src="/js/axios.min.js"></script>
+        <script src="/js/jquery-3.6.4.min.js"></script>
+        <script src="/js/tailwind-elements.js" type="module"></script>
+        <script src="/js/common/global.js"></script>
+        <script type="module" src="/js/home/home-lib.js"></script>
+        <script type="module" src="/js/home/home.js"></script>
+    </body>
+</html>
