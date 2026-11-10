@@ -23,7 +23,7 @@ jobs:
         run: |
           git config user.name "fyd-market bot"
           git config user.email "actions@users.noreply.github.com"
-          git add out/market.json
+          git add out/market.json out/pricepoints_history.json
           git diff --cached --quiet && echo "no change" && exit 0
           git commit -m "market $(date -u +%Y-%m-%d)"
           git push
