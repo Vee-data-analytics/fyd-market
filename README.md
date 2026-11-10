@@ -59,7 +59,7 @@ The tunables are constants at the top of `scrape.py`, including the suburb id ma
 
 ## How often
 
-Once a day, e.g. 06:30. Most auction catalogues change daily, and Aucor's sold results are only visible for a short window after each sale. More often than daily adds load without adding much data. A typical run takes about 6–9 minutes on this connection, mostly Aucor's 10s crawl delay.
+Once a day, e.g. 06:30. Most auction catalogues change daily, and Aucor's sold results are only visible for a short window after each sale. More often than daily adds load without adding much data. A typical run takes about 4.5 minutes and ~106 requests; about 165s of that is Aucor's 10s crawl delay.
 
 ## Known limits
 
