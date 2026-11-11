@@ -72,32 +72,59 @@ PP_SUBURBS = {
     "Wilgeheuwel": "west-rand/roodepoort/wilgeheuwel/286",
     "Weltevreden Park": "west-rand/roodepoort/weltevreden-park/280",
     "Radiokop": "west-rand/roodepoort/radiokop/281",
-    "Ruimsig": "west-rand/roodepoort/ruimsig/830",
-    "Zandspruit": "west-rand/roodepoort/zandspruit/7790",
     "Northgate": "johannesburg/randburg/northgate/1492",
     "North Riding": "johannesburg/randburg/north-riding/771",
     "Northwold": "johannesburg/randburg/northwold/379",
     "Olivedale": "johannesburg/randburg/olivedale/1143",
-    "Bloubosrand": "johannesburg/randburg/bloubosrand/378",
     "Sundowner": "johannesburg/randburg/sundowner/770",
     "Randpark Ridge": "johannesburg/randburg/randpark-ridge/259",
 }
-# Property24 suburb ids (from the Randburg / Roodepoort city pages)
+# Property24 suburbs: exactly the ones in your own Property24 search (38 suburbs,
+# houses/flats/townhouses, R700k max, 2+ beds). The advanced-search page itself is
+# off-limits to bots (robots.txt), so each suburb is read from its own page.
 P24_SUBURBS = {
-    "Honeydew": "honeydew/roodepoort/gauteng/716",
-    "Honeypark": "honeypark/roodepoort/gauteng/14262",
-    "Wilgeheuwel": "wilgeheuwel/roodepoort/gauteng/837",
-    "Weltevreden Park": "weltevreden-park/roodepoort/gauteng/1593",
-    "Radiokop": "radiokop/roodepoort/gauteng/756",
-    "Ruimsig": "ruimsig/roodepoort/gauteng/826",
-    "Northgate": "northgate/randburg/gauteng/4457",
-    "North Riding": "north-riding/randburg/gauteng/4455",
-    "Northwold": "northwold/randburg/gauteng/4282",
-    "Olivedale": "olivedale/randburg/gauteng/4294",
     "Randpark Ridge": "randpark-ridge/randburg/gauteng/4471",
-    "Zandspruit": "zandspruit/randburg/gauteng/33396",
+    "Weltevreden Park": "weltevreden-park/roodepoort/gauteng/1593",
+    "Laser Park": "laser-park/roodepoort/gauteng/12860",
+    "North Riding AH": "north-riding-ah/randburg/gauteng/4456",
+    "Honeypark": "honeypark/roodepoort/gauteng/14262",
+    "Eagle Canyon Golf Estate": "eagle-canyon-golf-estate/roodepoort/gauteng/10926",
+    "Sundowner": "sundowner/randburg/gauteng/4298",
+    "Northwold": "northwold/randburg/gauteng/4282",
+    "Boskruin": "boskruin/randburg/gauteng/4417",
+    "Northgate": "northgate/randburg/gauteng/4457",
+    "Sharonlea": "sharonlea/randburg/gauteng/4296",
+    "Boundary Park": "boundary-park/randburg/gauteng/33215",
+    "Rietfontein AH": "rietfontein-ah/krugersdorp/gauteng/976",
+    "Nooitgedacht": "nooitgedacht/krugersdorp/gauteng/1019",
+    "Lion Pride": "lion-pride/randburg/gauteng/33455",
+    "Mostyn Park": "mostyn-park/roodepoort/gauteng/5196",
+    "Cosmo Business Park": "cosmo-business-park/roodepoort/gauteng/17765",
+    "Craigavon": "craigavon/sandton/gauteng/3913",
+    "Glen Nerine": "glen-nerine/sandton/gauteng/5168",
+    "Salfred": "salfred/sandton/gauteng/5175",
+    "Brendavere": "brendavere/sandton/gauteng/17131",
+    "Noordhang": "noordhang/randburg/gauteng/4278",
+    "Hoogland": "hoogland/randburg/gauteng/12166",
+    "North Riding": "north-riding/randburg/gauteng/4455",
+    "Fourways": "fourways/sandton/gauteng/5811",
+    "Olivedale": "olivedale/randburg/gauteng/4294",
+    "Chartwell": "chartwell/randburg/gauteng/4424",
+    "Farmall AH": "farmall-ah/randburg/gauteng/4429",
+    "Alsef AH": "alsef-ah/roodepoort/gauteng/658",
+    "Honeydew Grove": "honeydew-grove/roodepoort/gauteng/12989",
+    "Ambot": "ambot/roodepoort/gauteng/17152",
+    "Honeydew Manor": "honeydew-manor/roodepoort/gauteng/10959",
+    "Honeydew Ridge": "honeydew-ridge/roodepoort/gauteng/819",
+    "Harveston AH": "harveston-ah/roodepoort/gauteng/32969",
+    "Radiokop": "radiokop/roodepoort/gauteng/756",
+    "Honeydew": "honeydew/roodepoort/gauteng/716",
+    "Kimbult AH": "kimbult-ah/roodepoort/gauteng/724",
+    "Wilgeheuwel": "wilgeheuwel/roodepoort/gauteng/837",
 }
 TARGET_SUBURBS = sorted(set(PP_SUBURBS) | set(P24_SUBURBS))
+# Never list these, whatever a site pads its results with.
+EXCLUDED_SUBURBS = re.compile(r"bloubos|cosmo city", re.I)
 
 # --------------------------------------------------------------------------
 # HTTP helper: polite, robots-aware, retrying, capped
@@ -438,10 +465,10 @@ def home_reject_reason(h: dict) -> str | None:
         return "price"
     if h.get("beds") is None or h["beds"] < HOME_BEDS_MIN:
         return "beds"
-    if h.get("type") not in ("sectional", "new development"):
+    if h.get("type") not in ("sectional", "freehold", "new development"):  # houses, flats, townhouses (as your search)
         return "type"
-    if re.search(r"cosmo city", (h.get("suburb") or "") + " " + (h.get("title") or ""), re.I):
-        return "in Cosmo City"
+    if EXCLUDED_SUBURBS.search((h.get("suburb") or "") + " " + (h.get("title") or "")):
+        return "excluded suburb"
     return None
 
 
