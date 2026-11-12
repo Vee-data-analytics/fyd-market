@@ -48,7 +48,7 @@ UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
 TIMEOUT = 30
 RETRIES = 2
 MIN_DELAY = 1.0            # seconds between requests to one host (robots Crawl-delay wins if larger)
-MAX_REQUESTS = 300         # hard cap per run
+MAX_REQUESTS = 450         # hard cap per run
 
 YEAR_MIN, YEAR_MAX = 2016, 2025
 PRICE_MIN, PRICE_MAX = 40_000, 80_000          # for bids / estimates / asking prices
@@ -541,7 +541,98 @@ def scrape_auction_operation(http: Http, ctx: dict) -> dict:
         "lot list API /auction/lots/search/ is disallowed by robots.txt - only auction-level data collected")
     for a in auctions:
         a["region"] = region_of(a["location"], a["name"]) or "Gauteng"
-    return {"cars": [], "raw": 0, "auctions": auctions, "note": note}
+    # The lots themselves come from Auction Operation's public site (auctionoperation.co.za, no
+    # robots.txt), which lists each auction's lots a day before it opens, one page per lot.
+    cars, raw = scrape_ao_classic(http)
+    if cars:
+        note = None
+    return {"cars": cars, "raw": raw, "auctions": auctions, "note": note}
+
+
+AO_SITE = "https://auctionoperation.co.za"
+AO_VEHICLE_RE = re.compile(r"vehicle|auto|car\b|wesbank|repo|fleet|salvage|runner", re.I)
+
+
+def parse_ao_auction_page(html: str) -> dict:
+    """auction_details.aspx: the auction's name, dates and venue, and its lot cards."""
+    t = re.sub(r"\s+", " ", text_of(html))
+    head = re.search(r"Contact ([^.]{3,120}?)\.? Auction Date\(s\): (.*?)\. (?:Viewing|Bid Online)", t)
+    venue = re.search(r"Venue: (.*?)\.", t)
+    lots = []
+    for block in html.split('href="item_details_from_new_app.aspx')[1:]:
+        q = re.match(r'(\?VID=[^"&]+&(?:amp;)?AID=\d+)"', block)
+        lot = re.search(r"LOT NO: (\d+) - (.*?)</strong>", block, re.S)
+        if not q or not lot:
+            continue
+        img = re.search(r'<img src="([^"]+)"', block)
+        lots.append({"href": "item_details_from_new_app.aspx" + htmlmod.unescape(q.group(1)), "image": img.group(1) if img else None,
+                     "lot": int(lot.group(1)), "title": re.sub(r"\s+", " ", htmlmod.unescape(lot.group(2))).strip(" .")})
+    return {"name": head.group(1).strip() if head else None, "dates": head.group(2).strip() if head else None,
+            "venue": venue.group(1).strip() if venue else None, "lots": lots}
+
+
+def parse_ao_item(html: str) -> dict:
+    """item_details_from_new_app.aspx: odometer, colour and the inspector's notes."""
+    t = re.sub(r"<(script|style)\b.*?</\1>", " ", html, flags=re.S | re.I)
+    lines = [re.sub(r"\s+", " ", htmlmod.unescape(x)).strip() for x in re.split(r"<[^>]+>", t)]
+    lines = [x for x in lines if x]
+    km = colour = None
+    notes: list[str] = []
+    for i, x in enumerate(lines):
+        if x.startswith("ODO:"):
+            km = clean_km(x[4:])
+        elif x.startswith("COLOUR:"):
+            colour = x[7:].strip().title()
+            for y in lines[i + 1:i + 12]:
+                if re.match(r"PLUS \d|BID ONLINE|VIN|ODO", y, re.I):
+                    break
+                notes.append(y.rstrip("."))
+    fees = re.search(r"PLUS ([^<\n]*?ADMIN FEE)", text_of(html), re.I)
+    return {"km": km, "colour": colour, "notes": notes, "fees": fees.group(1).strip() if fees else None}
+
+
+def ao_date(dates: str | None) -> str | None:
+    ms = list(re.finditer(r"(\d{1,2} \w{3} \d{4})(?: (\d{1,2}:\d{2}))?", dates or ""))
+    m = ms[-1] if ms else None   # bidding closes on the last date
+    if not m:
+        return None
+    try:
+        return datetime.strptime(m.group(1) + " " + (m.group(2) or "08:00"), "%d %b %Y %H:%M").isoformat()
+    except ValueError:
+        return None
+
+
+def scrape_ao_classic(http: Http, max_items: int = 90) -> tuple[list[dict], int]:
+    r = http.get(AO_SITE + "/")
+    ids = sorted(set(int(x) for x in re.findall(r"auction_details\.aspx\?ID=(\d+)", r.text)))
+    cars, raw, fetched = [], 0, 0
+    for aid in ids:
+        page = http.get(f"{AO_SITE}/auction_details.aspx?ID={aid}")
+        a = parse_ao_auction_page(page.text)
+        if not a["lots"] or not AO_VEHICLE_RE.search(a["name"] or ""):
+            continue
+        raw += len(a["lots"])
+        when = ao_date(a["dates"])
+        for lot in a["lots"]:
+            title = re.sub(r"^(\d{4})(?=[A-Z])", r"\1 ", lot["title"])          # "2025SUZUKIFRONX" -> "2025 SUZUKIFRONX"
+            probe = make_car("auction_operation", "", title)
+            if car_reject_reason(probe):
+                continue                       # only open the lots worth showing
+            url = f"{AO_SITE}/{lot['href']}"
+            info = {"km": None, "colour": None, "notes": [], "fees": None}
+            if fetched < max_items:
+                try:
+                    info = parse_ao_item(http.get(url).text); fetched += 1
+                except Exception:
+                    pass
+            notes = ", ".join(n for n in info["notes"] if n) or None
+            label = condition_notes(title, notes or "")
+            cars.append(make_car(
+                "auction_operation", url, title, location=a["venue"] or "Lea Glen, Roodepoort", region=region_of(a["venue"], a["name"]) or "Gauteng",
+                auctionDate=when, auctionName=a["name"], image=lot["image"], km=info["km"],
+                notes=", ".join(x for x in [label, notes] if x) or None,
+                extra={"lot": lot["lot"], "colour": info["colour"], "fees": info["fees"]}))
+    return cars, raw
 
 
 # --------------------------------------------------------------------------

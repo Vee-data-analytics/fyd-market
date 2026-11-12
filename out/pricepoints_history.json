@@ -460,5 +460,19 @@
   "url": "https://live.aucor.com/lots/view/4-NLXD2D/2018-nissan-qashqai-12t-acenta-cvt",
   "region": "Western Cape",
   "condition": "accident damaged"
+ },
+ {
+  "source": "aucor",
+  "make": "Isuzu",
+  "model": "D-MAX",
+  "year": 2023,
+  "km": 93720,
+  "price": 212000.0,
+  "kind": "hammer",
+  "date": "2026-11-12",
+  "title": "2023 ISUZU D-MAX 1,9 DDI HR E/CAB",
+  "url": "https://live.aucor.com/lots/view/4-NM9J50/2023-isuzu-d-max-1-9-ddi-hr-ecab",
+  "region": "KwaZulu-Natal",
+  "condition": null
  }
 ]
